@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date("date");
             $table->time("time");
             $table->text("message");
-
+            $table->string("tokens");
             $table->timestamps();
             // $table->id();
             // $table->timestamps();

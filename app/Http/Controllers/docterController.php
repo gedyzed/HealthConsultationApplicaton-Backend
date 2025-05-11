@@ -18,44 +18,6 @@ class docterController extends Controller
 
 
 
-    //setProfile
-
-    public function setProfile(Request $request)
-    {
-
-        $validator = Validator::make($request->all(), [
-            "fullName" => "required",
-            "doctor_id" => "required",
-            'image' => 'nullable',
-            "idImage" => "nullable",
-            "aboutMe" => "required",
-            "pricing"=>"required",
-            "yearOfExperience"=>"required"
-        ]);
-
-        if ($validator->fails()) {
-            $data = [
-                "status" => "failed",
-                "data" => $validator->errors(),
-            ];
-            return response()->json($data, 422);
-        } else {
-
-          
-            $doctor = new Doctors();
-            $doctor->fullName = $request->fullName;
-            $doctor->doctor_id = $request->doctor_id;
-            $doctor->image = $request->image;
-            $doctor->yearOfExperience = $request->yearOfExperience;
-            $doctor->idImage = $request->idImage;
-            $doctor->pricing = $request->pricing;
-            $doctor->aboutMe = $request->aboutMe;           
-            $doctor->save();
-            return response()->json($doctor, 200);
-        }
-    }
-
-
     public function getDoctorById(Request $request, $id)
     {
 
@@ -177,4 +139,17 @@ class docterController extends Controller
 
         return response()->json(['status' => 200, 'message' => 'Profile updated successfully'], 200);
     }
+
+
+    public function getPatientList(Request $request , $id){
+        $appointments = Appointments::where("doctor_id",$id)->get();
+        $patient = [];
+        
+        foreach ($appointments as $app){
+            $patient[] = $app->patient;
+            
+        }
+        return response()->json(array_unique($patient),200);
+
+        }
 }

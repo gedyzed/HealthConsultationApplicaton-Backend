@@ -13,11 +13,6 @@ class authenticationController extends Controller
 {
     //Sign up  post Api
     // api/signUP
-
-
-
-
-
     public function signUp(Request $request){
 
         $validator = Validator::make($request->all(), [
@@ -53,5 +48,37 @@ class authenticationController extends Controller
             ], 200);
         }
 
+    }
+
+
+
+    public function login(Request $request)    {
+        $credentials = $request->only(['email', 'password']);
+        $token = Auth::attempt(credentials: $credentials);
+        if (!$token) {
+            return response()->json(data: [
+                'status' => 'error',
+                'message' => 'Unauthorized',
+            ], status: 401);
+        }
+
+        $user = Auth::user();
+        return response()->json(data: [
+            'status' => 'success',
+            'user' => $user,
+            'authorisation' => [
+                'token' => $token,
+                'type' => 'bearer',
+            ]
+        ]);
+    }
+
+
+
+    public function logout()
+    {
+        auth::logout(); 
+
+        return response()->json(['message' => 'Successfully logged out']);
     }
 }
