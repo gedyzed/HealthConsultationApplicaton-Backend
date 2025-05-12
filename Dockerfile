@@ -10,15 +10,10 @@ RUN apt-get update && apt-get install -y \
     && a2enmod rewrite proxy_fcgi \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Configure Apache for Railway
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf && \
-    sed -i 's/Listen 80/Listen 9000/' /etc/apache2/ports.conf
-
-# Create and enable custom site config
-COPY docker/apache.conf /etc/apache2/sites-available/laravel.conf
-RUN a2dissite 000-default && \
-    a2ensite laravel && \
-    a2enmod rewrite
+# Set Apache to listen on Railway's expected port (9000)
+RUN sed -i 's/Listen 80/Listen 9000/' /etc/apache2/ports.conf && \
+    sed -i 's/:80/:9000/' /etc/apache2/sites-enabled/000-default.conf && \
+    echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- \
@@ -33,20 +28,15 @@ COPY . .
 # Install PHP dependencies
 RUN composer install --optimize-autoloader --no-dev
 
-# Fix permissions
-RUN chown -R www-data:www-data /var/www/html && \
-    find /var/www/html -type d -exec chmod 755 {} \; && \
-    find /var/www/html -type f -exec chmod 644 {} \; && \
-    chmod -R 775 storage bootstrap/cache
+# Set permissions
+RUN mkdir -p storage bootstrap/cache && \
+    chown -R www-data:www-data storage bootstrap/cache
 
 # Use production PHP config
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-# Clear Laravel caches
-RUN php artisan route:clear && \
-    php artisan config:clear && \
-    php artisan cache:clear
-
+# Expose Railway's expected port
 EXPOSE 9000
 
+# Start Apache
 CMD ["apache2-foreground"]
