@@ -15,15 +15,14 @@ RUN sed -i 's/Listen 80/Listen 9000/' /etc/apache2/ports.conf && \
     sed -i 's/:80/:9000/' /etc/apache2/sites-enabled/000-default.conf && \
     echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- \
-    --install-dir=/usr/local/bin --filename=composer
+# Set working directory to the root of the Laravel project
+WORKDIR /var/www
 
-# Set working directory
-WORKDIR /var/www/html
-
-# Copy files
+# Copy all project files into container
 COPY . .
+
+# Point Apache to Laravel's public directory
+RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/public|' /etc/apache2/sites-enabled/000-default.conf
 
 # Install PHP dependencies
 RUN composer install --optimize-autoloader --no-dev
