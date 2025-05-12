@@ -24,6 +24,11 @@ COPY . .
 # Point Apache to Laravel's public directory
 RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/public|' /etc/apache2/sites-enabled/000-default.conf
 
+# Install Composer (reliable method)
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
+    php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
+    php -r "unlink('composer-setup.php');"
+
 # Install PHP dependencies
 RUN composer install --optimize-autoloader --no-dev
 
@@ -38,4 +43,4 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 EXPOSE 9000
 
 # Start Apache
-CMD ["apache2-foreground"]
+CMD ["apache2-fo]()
