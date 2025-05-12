@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedInteger("yearOfExperience");
             $table->decimal("pricing", 10, 2);
             $table->string("image");
-            $table->string("idImage");
+            $table->string("");
 
             $table->timestamps();
            

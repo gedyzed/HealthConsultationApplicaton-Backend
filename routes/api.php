@@ -35,7 +35,8 @@ Route::get('/doctorList/{id}',[patientController::class, "getDocterList"])->midd
 Route::get("/doctor/{id}", [docterController::class, "getDoctorById"])->middleware("auth:api");
 Route::get("/doctor/getProfileById/{id}",[docterController::class, "getProfileById"])->middleware("auth:api");
 Route::get('/doctor/{id}/commment', [docterController::class, 'getCommentsOfDoctor'])->middleware("auth:api");
-Route::post('/doctor/setDoctorProfile', [docterController::class, 'setDoctorProfile'])->middleware("auth:api");
+Route::post('/doctor/setprofile', [docterController::class, 'setProfile'])->middleware("auth:api");
+Route::post('/doctor/editProfile/{id}', [docterController::class, 'editProfile'])->middleware("auth:api");
 Route::get('/patientList/{id}',[docterController::class,"getPatientList"]) ->middleware("auth:api");
 
 //appointments

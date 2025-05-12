@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Educations extends Model
 {
     //
+    protected $fillable = ["degree", "fieldOfStudy", "institution", "endYear"];
 
     protected $primaryKey = "education_id";
     public function doctor()

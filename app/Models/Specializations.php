@@ -8,6 +8,10 @@ class Specializations extends Model
 {
     //
 
+    protected $fillable = [
+       "name"
+    ];
+
     protected $primaryKey = "specialization_id";
     public function doctor()
     {

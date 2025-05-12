@@ -14,10 +14,14 @@ class patientController extends Controller
 {
     //
 
+    
+
 
       //setProfile
 
-    public function setProfile(Request $request) {    
+    public function setProfile(Request $request) {
+
+        
 
         $validator = Validator::make($request->all(), [
             "fullName" => "required",
@@ -44,9 +48,9 @@ class patientController extends Controller
             $patient = new Patients();
             $patient->fullName = $request->fullName;
             $patient->patient_id = $request->patient_id;
-            $patient->image = Storage::url($img1);
+            $patient->image = url($img1);
             $patient->gender = $request->gender;
-            $patient->idImage = Storage::url($img2);
+            $patient->idImage = url($img2);
             $patient->aboutMe = $request->aboutMe;
             $patient->save();
             return response()->json($patient, 200);

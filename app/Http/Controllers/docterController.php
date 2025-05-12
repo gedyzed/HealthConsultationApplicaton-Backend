@@ -5,9 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Appointments;
 use App\Models\Doctors;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+
+
 
 class docterController extends Controller
 {
@@ -73,71 +78,105 @@ class docterController extends Controller
     }
 
 
-    public function setDoctorProfile(Request $request)
+    public function setProfile(Request $request)
     {
-        $request->validate([
-            'doctor_id' => 'required',
-            'fullName' => 'required',
-            'aboutMe' => 'required',
-            'yearOfExperience' => 'required',
-            'pricing' => 'required',
-            'image' => 'required',
-            'idImage' => 'required',
-            'languages' => 'required',
-            'specializations' => 'array',
-            'education' => 'array',
-            'education.*.degree' => 'required',
-            'education.*.fieldOfStudy' => 'required',
-            'education.*.institution' => 'required',
-            'education.*.endYear' => 'required',
-            'certifications' => 'required',
-        ]);
-        
-        
-        
-        
-        
-        $user = User::findOrFail($request->doctor_id);
-        
-        
-        
-        $user->doctor->create($request->only([
-            'fullName',
-            'aboutMe',
-            'yearOfExperience',
-            'pricing',
-            'image',
-            'idImage'
-        ]));
-        return response()->json([$user->doctor],200);
+        try {
+                $validator = Validator::make($request->all(), [
+                    "fullName" => "required",
+                    "doctor_id" => "required",
+                    'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2948',
+                    "idImage" => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2948',
+                    "aboutMe" => "required",
+                    "pricing" => "required",
+                    "yearOfExperience" => "required",
+                    'languages' => 'required|array',
+                    'specializations' => 'array',
+                    'education' => 'array',
+                    'education.*.degree' => 'required|string',
+                    'education.*.fieldOfStudy' => 'required|string',
+                    'education.*.institution' => 'required|string',
+                    'education.*.endYear' => 'required|integer',
 
+                    'certifications' => 'required|array',
+                    'certifications.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2948',
+                ]);
 
+                if ($validator->fails()) {
+                    return response()->json([
+                        "status" => "failed",
+                        "data" => $validator->errors(),
+                    ], 422);
+                }
 
-        foreach ($request->specializations as $spec) {
-            $user->doctor->specializations()->create(['name' => $spec]);
+                $doctor = Doctors::where('doctor_id', $request->doctor_id)->first();
+
+                if (!$doctor) {
+                    $doctor = new Doctors();
+                    $doctor->doctor_id = $request->doctor_id;
+                }
+           
+                $imageName = Str::random(32) . "." . $request->image->getClientOriginalExtension();
+                $IDImage = Str::random(32) . "." . $request->idImage->getClientOriginalExtension();
+
+                Storage::disk('public')->put($imageName, file_get_contents($request->image));
+                Storage::disk('public')->put($IDImage, file_get_contents($request->idImage));
+
+                // Set fields (no re-creating Doctor object!)
+                $doctor->fullName = $request->fullName;
+                $doctor->image = $imageName;
+                $doctor->yearOfExperience = $request->yearOfExperience;
+                $doctor->idImage = $IDImage;
+                $doctor->pricing = $request->pricing;
+                $doctor->aboutMe = $request->aboutMe;
+
+                $doctor->save();
+
+                // Optional: clear old relations to avoid duplicates
+                $doctor->specializations()->delete();
+                $doctor->languages()->delete();
+                $doctor->educations()->delete();
+                $doctor->certificates()->delete();
+
+                foreach ($request->specializations as $spec) {
+                    $doctor->specializations()->create(['name' => $spec]);
+                }
+
+                foreach ($request->languages as $lang) {
+                    $doctor->languages()->create(['language' => $lang]);
+                }
+
+                foreach ($request->education as $edu) {
+                    $doctor->educations()->create([
+                        'degree' => $edu['degree'],
+                        'fieldOfStudy' => $edu['fieldOfStudy'],
+                        'institution' => $edu['institution'],
+                        'endYear' => $edu['endYear'],
+                    ]);
+                 }
+
+                foreach ($request->certifications as $cert) {
+                    $certificateImage = Str::random(32) . "." . $cert->getClientOriginalExtension();
+                    Storage::disk('public')->put($certificateImage, file_get_contents($cert));
+                    $doctor->certificates()->create(['certificate_image' => $certificateImage]);
+                }
+
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Profile updated successfully',
+                    'data' => $doctor
+                ], 200);
+        
+          
+        } 
+        catch (Exception  $e) {
+            return response()->json([
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage()
+            ], 500);
         }
 
 
-        foreach ($request->languages as $lang) {
-            $user->doctor->languages()->create(['language' => $lang]);
-        }
-
-
-        foreach ($request->education as $edu) {
-            $user->doctor->educations()->create([
-                'degree' => $edu['degree'],
-                'fieldOfStudy' => $edu['fieldOfStudy'],
-                'institution' => $edu['institution'],
-                'endYear' => $edu['endYear'],
-            ]);
-        }
-
-
-        foreach ($request->certifications as $cert) {
-            $user->doctor->certificates()->create(['certificate_image' => $cert]);
-        }
-
-        return response()->json(['status' => 200, 'message' => 'Profile updated successfully'], 200);
+      
     }
 
 
@@ -152,4 +191,72 @@ class docterController extends Controller
         return response()->json(array_unique($patient),200);
 
         }
+
+
+
+
+
+    public function editProfile(Request $request, $id)
+    {
+        $request->validate([
+            'fullName' => 'required|string',
+            'aboutMe' => 'required|string',
+            'pricing' => 'required|numeric',
+            'yearOfExperience' => 'required|integer',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2948',
+            'idImage' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2948',
+            'languages' => 'array',
+            'specializations' => 'array',
+            'education' => 'array',
+            'education.*.degree' => 'required|string',
+            'education.*.fieldOfStudy' => 'required|string',
+            'education.*.institution' => 'required|string',
+            'education.*.endYear' => 'required|integer',
+        ]);
+
+        $doctor = Doctors::findOrFail($id);
+
+        if ($request->hasFile('image')) {
+            $imageName = Str::random(32) . "." . $request->image->getClientOriginalExtension();
+            Storage::disk('public')->put($imageName, file_get_contents($request->image));
+            $doctor->image = $imageName;
+        }
+
+        $doctor->fullName = $request->fullName;
+        $doctor->aboutMe = $request->aboutMe;
+        $doctor->pricing = $request->pricing;
+        $doctor->yearOfExperience = $request->yearOfExperience;
+        $doctor->save();
+
+
+        $doctor->languages()->delete();
+        if ($request->filled('languages')) {
+            foreach ($request->languages as $lang) {
+                $doctor->languages()->create(['language' => $lang]);
+            }
+        }
+
+        $doctor->specializations()->delete();
+        if ($request->filled('specializations')) {
+            foreach ($request->specializations as $spec) {
+                $doctor->specializations()->create(['name' => $spec]);
+            }
+        }
+        $doctor->educations()->delete();
+        if ($request->filled('education')) {
+            foreach ($request->education as $edu) {
+                $doctor->educations()->create([
+                    'degree' => $edu['degree'],
+                    'fieldOfStudy' => $edu['fieldOfStudy'],
+                    'institution' => $edu['institution'],
+                    'endYear' => $edu['endYear'],
+                ]);
+            }
+        }
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Profile updated successfully',
+        ]);
+    }
 }

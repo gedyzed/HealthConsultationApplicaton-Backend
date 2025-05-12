@@ -8,6 +8,8 @@ class Languages extends Model
 {
     //
 
+    protected $fillable = ["language"];
+
     protected $primaryKey = "language_id";
     public function doctor()
     {
