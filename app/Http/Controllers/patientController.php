@@ -33,8 +33,8 @@ class patientController extends Controller
         ]);
 
 
-        $img1 = $request->file('image')->store('public/files');
-        $img2 = $request->file('idImage')->store('public/files');
+        $img1 = "storage/".$request->file('image')->store('public');
+        $img2 = "storage/".$request->file('idImage')->store('public');
 
         if ($validator->fails()) {
             $data = [
@@ -45,10 +45,11 @@ class patientController extends Controller
 
 
         } else {
+     
             $patient = new Patients();
             $patient->fullName = $request->fullName;
             $patient->patient_id = $request->patient_id;
-            $patient->image = url($img1);
+            $patient->image =url($img1);
             $patient->gender = $request->gender;
             $patient->idImage = url($img2);
             $patient->aboutMe = $request->aboutMe;

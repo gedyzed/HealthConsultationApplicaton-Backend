@@ -114,18 +114,15 @@ class docterController extends Controller
                     $doctor = new Doctors();
                     $doctor->doctor_id = $request->doctor_id;
                 }
-           
-                $imageName = Str::random(32) . "." . $request->image->getClientOriginalExtension();
-                $IDImage = Str::random(32) . "." . $request->idImage->getClientOriginalExtension();
 
-                Storage::disk('public')->put($imageName, file_get_contents($request->image));
-                Storage::disk('public')->put($IDImage, file_get_contents($request->idImage));
+                $img1 = "storage/" . $request->file('image')->store('public');
+                $img2 = "storage/" . $request->file('idImage')->store('public');
 
                 // Set fields (no re-creating Doctor object!)
                 $doctor->fullName = $request->fullName;
-                $doctor->image = $imageName;
+                $doctor->image = url($img1);
                 $doctor->yearOfExperience = $request->yearOfExperience;
-                $doctor->idImage = $IDImage;
+                $doctor->idImage = url($img2);
                 $doctor->pricing = $request->pricing;
                 $doctor->aboutMe = $request->aboutMe;
 
@@ -154,10 +151,10 @@ class docterController extends Controller
                     ]);
                  }
 
+                 $cer = url("storage/" . $request->file('image')->store('public'));
                 foreach ($request->certifications as $cert) {
-                    $certificateImage = Str::random(32) . "." . $cert->getClientOriginalExtension();
-                    Storage::disk('public')->put($certificateImage, file_get_contents($cert));
-                    $doctor->certificates()->create(['certificate_image' => $certificateImage]);
+                  
+                    $doctor->certificates()->create(['certificate_image' => $cer]);
                 }
 
                 return response()->json([
