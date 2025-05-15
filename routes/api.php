@@ -22,45 +22,66 @@ Route::get('/user', function (Request $request) {
 //login and sign up
 Route::post("/signUp",[authenticationController::class, "signUp"]);
 Route::post("/login",[authenticationController::class, "login"]);
-Route::post("/logout",[authenticationController::class, "logout"])->middleware("auth:api");
+Route::post("/logout",[authenticationController::class, "logout"]);
+// ->middleware("auth:api");
 
 
 //patient
 
-Route::post("/patient/setProfile", [patientController::class, "setProfile"])->middleware("auth:api");
-Route::get("/patient/{id}", [patientController::class, "getPatientById"])->middleware("auth:api");
-Route::get('/doctorList/{id}',[patientController::class, "getDocterList"])->middleware("auth:api");
+Route::post("/patient/setProfile", [patientController::class, "setProfile"]);
+// ->middleware("auth:api");
+Route::get("/patient/{id}", [patientController::class, "getPatientById"]);
+// ->middleware("auth:api");
+Route::get('/doctorList/{id}',[patientController::class, "getDocterList"]);
+// ->middleware("auth:api");
 
 //docter
-Route::get("/doctor/{id}", [docterController::class, "getDoctorById"])->middleware("auth:api");
-Route::get("/doctor/getProfileById/{id}",[docterController::class, "getProfileById"])->middleware("auth:api");
-Route::get('/doctor/{id}/commment', [docterController::class, 'getCommentsOfDoctor'])->middleware("auth:api");
-Route::post('/doctor/setprofile', [docterController::class, 'setProfile'])->middleware("auth:api");
-Route::post('/doctor/editProfile/{id}', [docterController::class, 'editProfile'])->middleware("auth:api");
-Route::get('/patientList/{id}',[docterController::class,"getPatientList"]) ->middleware("auth:api");
+Route::get("/doctor/{id}", [docterController::class, "getDoctorById"]);
+// ->middleware("auth:api");
+Route::get("/doctor/getProfileById/{id}",[docterController::class, "getProfileById"]);
+// ->middleware("auth:api");
+Route::get('/doctor/{id}/commment', [docterController::class, 'getCommentsOfDoctor']);
+// ->middleware("auth:api");
+Route::post('/doctor/setprofile', [docterController::class, 'setProfile']);
+// ->middleware("auth:api");
+Route::post('/doctor/editProfile/{id}', [docterController::class, 'editProfile']);
+// ->middleware("auth:api");
+Route::get('/patientList/{id}',[docterController::class,"getPatientList"]);
+//  ->middleware("auth:api");
 
 //appointments
-Route::post("/setAppointment",[appointmentController::class, "setAppointment"])->middleware("auth:api");
-Route::get("/appointment/patient/{id}", [appointmentController::class, "getAppointmetnByPatientId"])->middleware("auth:api");
-Route::get('/appointments/success/{id}', [appointmentController::class, 'appointmentSuccess'])->middleware("auth:api");
-Route::get("/doctor/{id}/UpcomingAppointments", [appointmentController::class, "getUpcomingAppointmentByDoctorId"])->middleware("auth:api");
-Route::get("/doctor/{id}/closedAppointment", [appointmentController::class, "getClosedAppointment"])->middleware("auth:api");
-Route::get("/patient/{id}/upcommingAppointments", [appointmentController::class, "getUpcomingAppointmentByPatientId"])->middleware("auth:api");
+Route::post("/setAppointment",[appointmentController::class, "setAppointment"]);
+// ->middleware("auth:api");
+Route::get("/appointment/patient/{id}", [appointmentController::class, "getAppointmetnByPatientId"]);
+// ->middleware("auth:api");
+Route::get('/appointments/success/{id}', [appointmentController::class, 'appointmentSuccess']);
+// ->middleware("auth:api");
+Route::get("/doctor/{id}/UpcomingAppointments", [appointmentController::class, "getUpcomingAppointmentByDoctorId"]);
+// ->middleware("auth:api");
+Route::get("/doctor/{id}/closedAppointment", [appointmentController::class, "getClosedAppointment"]);
+// ->middleware("auth:api");
+Route::get("/patient/{id}/upcommingAppointments", [appointmentController::class, "getUpcomingAppointmentByPatientId"]);
+// ->middleware("auth:api");
 
 
 //call 
-Route::post("/setCall",[callController::class, "setCall"])->middleware("auth:api");
+Route::post("/setCall",[callController::class, "setCall"]);
+// ->middleware("auth:api");
 
 //payment
-Route::post("/setPayment",[paymentController::class, "setPayment"])->middleware("auth:api");
+Route::post("/setPayment",[paymentController::class, "setPayment"]);
+// ->middleware("auth:api");
 
 //comment
-Route::get("/docter/{id}",[commentController::class,"getCommentByDoctorId"])->middleware("auth:api");
-Route::post('/appointment/{id}/comment', [commentController::class, 'postComment'])->middleware("auth:api");
+Route::get("/docter/{id}",[commentController::class,"getCommentByDoctorId"]);
+// ->middleware("auth:api");
+Route::post('/appointment/{id}/comment', [commentController::class, 'postComment']);
+// ->middleware("auth:api");
 
 
 //speciality 
-Route::get('/specialization/{name}/doctorsList', [specializationController::class,  'specializedDoctors'])->middleware("auth:api");
+Route::get('/specialization/{name}/doctorsList', [specializationController::class,  'specializedDoctors']);
+// ->middleware("auth:api");
 
 //Agorachat
 Route::post('/create/agora/user', [AgoraChatController::class, 'create']);
