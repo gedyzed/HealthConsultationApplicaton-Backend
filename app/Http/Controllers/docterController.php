@@ -114,8 +114,15 @@ class docterController extends Controller
                     $doctor->doctor_id = $request->doctor_id;
                 }
 
-                $img1 = "storage/" . $request->file('image')->store('public');
-                $img2 = "storage/" . $request->file('idImage')->store('public');
+                if ($request->hasFile('image')) {
+                    $img1 = "storage/" . $request->file('image')->store('public');
+                    $doctor->image = url($img1);
+                }
+
+                if ($request->hasFile('idImage')) {
+                    $img2 = "storage/" . $request->file('idImage')->store('public');
+                    $doctor->idImage = url($img2);
+                }
 
                 // Set fields (no re-creating Doctor object!)
                 $doctor->fullName = $request->fullName;
