@@ -96,9 +96,8 @@ class docterController extends Controller
                     'education.*.fieldOfStudy' => 'required|string',
                     'education.*.institution' => 'required|string',
                     'education.*.endYear' => 'required|integer',
-
-                    'certifications' => 'nullable|array',
-                    // 'certifications.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2948',
+                    'certifications' => 'required|array',
+                   
                 ]);
 
                 if ($validator->fails()) {
@@ -151,10 +150,10 @@ class docterController extends Controller
                     ]);
                  }
 
-                 $cer = url("storage/" . $request->file('image')->store('public'));
+                 // $cer = url("storage/" . $request->file('image')->store('public'));
                 foreach ($request->certifications as $cert) {
                   
-                    $doctor->certificates()->create(['certificate_image' => $cer]);
+                    $doctor->certificates()->create(['certificate_image' => $cert]);
                 }
 
                 return response()->json([
