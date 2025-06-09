@@ -113,18 +113,22 @@ public function setProfile(Request $request)
             $doctor->doctor_id = $request->doctor_id;
         }
 
-        // Set image fields only if file exists
+        // If image uploaded, use it. Otherwise set a default image if not already set
         if ($request->hasFile('image')) {
-            $img1 = "storage/" . $request->file('image')->store('public');
-            $doctor->image = url($img1);
+            $imgPath = $request->file('image')->store('public');
+            $doctor->image = url('storage/' . basename($imgPath));
+        } elseif (!$doctor->image) {
+       
+            $doctor->image = url('storage/app/public/photo_2022-07-14_20-13-30.jpg');
         }
 
+        // Handle ID image
         if ($request->hasFile('idImage')) {
-            $img2 = "storage/" . $request->file('idImage')->store('public');
-            $doctor->idImage = url($img2);
+            $idImgPath = $request->file('idImage')->store('public');
+            $doctor->idImage = url('storage/' . basename($idImgPath));
         }
 
-        // Other profile fields
+        // Set other fields
         $doctor->fullName = $request->fullName;
         $doctor->yearOfExperience = $request->yearOfExperience;
         $doctor->pricing = $request->pricing;
@@ -158,7 +162,7 @@ public function setProfile(Request $request)
             ]);
         }
 
-        // Save certifications (as names/titles)
+        // Save certifications
         foreach ($request->get('certifications', []) as $cert) {
             $doctor->certificates()->create(['certificate_image' => $cert]);
         }
@@ -168,6 +172,7 @@ public function setProfile(Request $request)
             'message' => 'Profile updated successfully',
             'data' => $doctor
         ], 200);
+
     } catch (Exception $e) {
         return response()->json([
             'message' => 'Something went wrong',
@@ -175,6 +180,7 @@ public function setProfile(Request $request)
         ], 500);
     }
 }
+
 
 
 
