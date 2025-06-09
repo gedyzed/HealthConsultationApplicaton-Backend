@@ -84,8 +84,8 @@ class docterController extends Controller
                 $validator = Validator::make($request->all(), [
                     "fullName" => "required",
                     "doctor_id" => "required",
-                    'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2948',
-                    "idImage" => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2948',
+                    'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2948',
+                    "idImage" => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2948',
                     "aboutMe" => "required",
                     "pricing" => "required",
                     "yearOfExperience" => "required",
@@ -98,7 +98,7 @@ class docterController extends Controller
                     'education.*.endYear' => 'required|integer',
 
                     'certifications' => 'required|array',
-                    'certifications.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2948',
+                    'certifications.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2948',
                 ]);
 
                 if ($validator->fails()) {
