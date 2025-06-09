@@ -97,8 +97,8 @@ class docterController extends Controller
                     'education.*.institution' => 'required|string',
                     'education.*.endYear' => 'required|integer',
 
-                    'certifications' => 'required|array',
-                    'certifications.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2948',
+                    'certifications' => 'nullable|array',
+                    // 'certifications.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2948',
                 ]);
 
                 if ($validator->fails()) {
