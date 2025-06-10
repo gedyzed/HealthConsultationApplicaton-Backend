@@ -38,7 +38,7 @@ public function setProfile(Request $request)
         }
 
         // Find or create a new patient instance (not saved yet)
-        $patient = Patients::firstOrNew(['id' => $request->patient_id]);
+        $patient = Patients::firstOrNew(['patient_id' => $request->patient_id]);
 
         // Handle profile image upload
         if ($request->hasFile('image')) {
