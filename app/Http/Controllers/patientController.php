@@ -45,12 +45,20 @@ public function setProfile(Request $request)
             $imgPath = $request->file('image')->store('public');
             $patient->image = url('storage/' . basename($imgPath));
         }
+         elseif (!$patient->image) {
+            $patient->image = url('storage/app/public/photo_2022-07-14_20-13-30.jpg');
+        }
 
         // Handle ID image upload
         if ($request->hasFile('idImage')) {
             $idImgPath = $request->file('idImage')->store('public');
             $patient->idImage = url('storage/' . basename($idImgPath));
+        } elseif (!$patient->image) {
+            $patient->image = url('storage/app/public/photo_2022-07-14_20-13-30.jpg');
         }
+ 
+        
+        
 
         // Update optional fields
         if ($request->filled('name')) {
