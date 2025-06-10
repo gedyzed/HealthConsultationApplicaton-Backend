@@ -37,41 +37,29 @@ public function setProfile(Request $request)
             ], 422);
         }
 
-        // Find or create a new patient instance (not saved yet)
+        // Find or create new patient instance
         $patient = Patients::firstOrNew(['patient_id' => $request->patient_id]);
 
-        // Handle profile image upload
+        // Upload profile image or use default
         if ($request->hasFile('image')) {
             $imgPath = $request->file('image')->store('public');
             $patient->image = url('storage/' . basename($imgPath));
-        }
-         elseif (!$patient->image) {
-            $patient->image = url('storage/app/public/photo_2022-07-14_20-13-30.jpg');
+        } elseif (!$patient->image) {
+            $patient->image = url('storage/app/public/photo_2022-07-14_20-13-30.jpg'); // make sure this file exists
         }
 
-        // Handle ID image upload
+        // Upload ID image or use default
         if ($request->hasFile('idImage')) {
             $idImgPath = $request->file('idImage')->store('public');
             $patient->idImage = url('storage/' . basename($idImgPath));
-        } elseif (!$patient->image) {
-            $patient->image = url('storage/app/public/photo_2022-07-14_20-13-30.jpg');
-        }
- 
-        
-        
-
-        // Update optional fields
-        if ($request->filled('fullName')) {
-            $patient->fullName = $request->fullName;
+        } elseif (!$patient->idImage) {
+            $patient->idImage = url('storage/app/public/photo_2022-07-14_20-13-30.jpg'); // same default as profile image
         }
 
-        if ($request->filled('gender')) {
-            $patient->gender = $request->gender;
-        }
-
-        if ($request->filled('aboutMe')) {
-            $patient->aboutMe = $request->aboutMe;
-        }
+        // Set fields or fallback defaults
+        $patient->fullName = $request->filled('fullName') ? $request->fullName : ($patient->fullName ?? 'Unknown');
+        $patient->gender = $request->filled('gender') ? $request->gender : ($patient->gender ?? 'Not specified');
+        $patient->aboutMe = $request->filled('aboutMe') ? $request->aboutMe : ($patient->aboutMe ?? '');
 
         $patient->save();
 
@@ -88,6 +76,7 @@ public function setProfile(Request $request)
         ], 500);
     }
 }
+
 
 
 
