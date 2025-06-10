@@ -125,7 +125,7 @@ public function getDocterList(Request $request, $id)
             ->where('appointments.patient_id', $id)
             ->select(
                 'users.user_id',
-                'users.fullName',
+                'doctors.fullName',
                 'users.email'
             )
             ->distinct()
