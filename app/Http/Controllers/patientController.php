@@ -19,44 +19,53 @@ class patientController extends Controller
 
       //setProfile
 
-    public function setProfile(Request $request) {
+public function setProfile(Request $request)
+{
+    // Validate input: all fields are optional, and image files are nullable
+    $validatedData = $request->validate([
+        'name' => 'nullable|string|max:255',
+        'gender' => 'nullable|string|in:male,female,other',
+        'about' => 'nullable|string',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        'idImage' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
 
-        
+    // Assume user is authenticated
+    $user = auth()->user();
 
-        $validator = Validator::make($request->all(), [
-            "fullName" => "required",
-            "patient_id" => "required",
-            'image' => 'required',
-            "gender" => "required",
-            "idImage" => "required",
-            "aboutMe" => "required",
-        ]);
-
-
-        $img1 = "storage/".$request->file('image')->store('public');
-        $img2 = "storage/".$request->file('idImage')->store('public');
-
-        if ($validator->fails()) {
-            $data = [
-                "status" => "failed",
-                "data" => $validator->errors(),
-            ];
-            return response()->json($data, 422);
-
-
-        } else {
-     
-            $patient = new Patients();
-            $patient->fullName = $request->fullName;
-            $patient->patient_id = $request->patient_id;
-            $patient->image =url($img1);
-            $patient->gender = $request->gender;
-            $patient->idImage = url($img2);
-            $patient->aboutMe = $request->aboutMe;
-            $patient->save();
-            return response()->json($patient, 200);
-        }
+    // Update text fields only if provided
+    if ($request->has('name')) {
+        $user->name = $validatedData['name'];
     }
+
+    if ($request->has('gender')) {
+        $user->gender = $validatedData['gender'];
+    }
+
+    if ($request->has('about')) {
+        $user->about = $validatedData['about'];
+    }
+
+    // Handle profile image (column name: `image`)
+    if ($request->hasFile('image')) {
+        $path = $request->file('image')->store('profiles', 'public');
+        $user->image = $path;
+    }
+
+    // Handle ID image (column name: `idImage`)
+    if ($request->hasFile('idImage')) {
+        $path = $request->file('idImage')->store('ids', 'public');
+        $user->idImage = $path;
+    }
+
+    // Save changes
+    $user->save();
+
+    return response()->json([
+        'message' => 'Profile updated successfully',
+        'user' => $user,
+    ]);
+}
 
 
     public function getPatientById(Request $request,$id)
