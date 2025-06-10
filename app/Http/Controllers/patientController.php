@@ -23,9 +23,9 @@ public function setProfile(Request $request)
     try {
         $validator = Validator::make($request->all(), [
             'patient_id' => 'required',
-            'name' => 'nullable|string',
+            'fullName' => 'nullable|string',
             'gender' => 'nullable|string',
-            'about' => 'nullable|string',
+            'aboutMe' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'idImage' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
