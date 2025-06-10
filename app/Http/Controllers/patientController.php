@@ -115,7 +115,7 @@ public function getPatientList(Request $request, $patient_id)
     return response()->json($doctors, 200);
 }
 
-public function getDoctorList(Request $request, $id)
+public function getDocterList(Request $request, $id)
 {
     try {
         $doctors = DB::table('appointments')
