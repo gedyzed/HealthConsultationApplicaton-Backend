@@ -187,10 +187,10 @@ public function setProfile(Request $request)
 public function getPatientList(Request $request, $doctor_id)
 {
     $patients = DB::table('appointments')
-        ->join('users', 'appointments.patient_id', '=', 'users.id')
+        ->join('users', 'appointments.patient_id', '=', 'users.user_id')
         ->where('appointments.doctor_id', $doctor_id)
         ->select(
-            'users.id',
+            'users.user_id',
             'users.fullName',
             'users.email',    
         )
