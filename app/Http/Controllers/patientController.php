@@ -74,17 +74,24 @@ class patientController extends Controller
         ]);
     }
 
-    public function getDocterList(Request $request , $id){
-        $appointments = Appointments::where("patient_id",$id)->get();
-        $doctor = [];
-        
-        foreach ($appointments as $app){
-            $doctor[] = $app->doctor;
-            
-        }
-        return response()->json(array_unique($doctor),200);
 
-        }
+public function getPatientList(Request $request, $patient_id)
+{
+    $doctors = DB::table('appointments') 
+        ->join('doctors', 'appointments.doctors_id', '=', 'doctors.doctors_id') 
+        ->join('users', 'doctors.doctors_id', '=', 'users.user_id') 
+        ->where('appointments.patient_id', $patient_id)  
+        ->select(
+            'users.user_id', 
+            'doctors.doctors_id', 
+            'doctors.fullName',
+            'users.email' 
+        )
+        ->distinct()
+        ->get();
+
+    return response()->json($doctors, 200);
+}
 }
  
 
