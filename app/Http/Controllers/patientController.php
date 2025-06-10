@@ -18,54 +18,72 @@ class patientController extends Controller
 
 
       //setProfile
-
 public function setProfile(Request $request)
 {
-    // Validate input: all fields are optional, and image files are nullable
-    $validatedData = $request->validate([
-        'name' => 'nullable|string|max:255',
-        'gender' => 'nullable|string|in:male,female,other',
-        'about' => 'nullable|string',
-        'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        'idImage' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-    ]);
+    try {
+        $validator = Validator::make($request->all(), [
+            'patient_id' => 'required|exists:patients,id',
+            'name' => 'nullable|string|max:255',
+            'gender' => 'nullable|string|in:male,female,other',
+            'about' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'idImage' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
 
-    // Assume user is authenticated
-    $user = auth()->user();
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'failed',
+                'data' => $validator->errors(),
+            ], 422);
+        }
 
-    // Update text fields only if provided
-    if ($request->has('name')) {
-        $user->name = $validatedData['name'];
+        $patient = Patient::find($request->patient_id);
+
+        if (!$patient) {
+            return response()->json(['message' => 'Patient not found.'], 404);
+        }
+
+        // Handle profile image upload
+        if ($request->hasFile('image')) {
+            $imgPath = $request->file('image')->store('public');
+            $patient->image = url('storage/' . basename($imgPath));
+        }
+
+        // Handle ID image upload
+        if ($request->hasFile('idImage')) {
+            $idImgPath = $request->file('idImage')->store('public');
+            $patient->idImage = url('storage/' . basename($idImgPath));
+        }
+
+        // Update optional fields
+        if ($request->filled('name')) {
+            $patient->name = $request->name;
+        }
+
+        if ($request->filled('gender')) {
+            $patient->gender = $request->gender;
+        }
+
+        if ($request->filled('about')) {
+            $patient->about = $request->about;
+        }
+
+        $patient->save();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Profile updated successfully',
+            'data' => $patient,
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Something went wrong',
+            'error' => $e->getMessage(),
+        ], 500);
     }
-
-    if ($request->has('gender')) {
-        $user->gender = $validatedData['gender'];
-    }
-
-    if ($request->has('about')) {
-        $user->about = $validatedData['about'];
-    }
-
-    // Handle profile image (column name: `image`)
-    if ($request->hasFile('image')) {
-        $path = $request->file('image')->store('profiles', 'public');
-        $user->image = $path;
-    }
-
-    // Handle ID image (column name: `idImage`)
-    if ($request->hasFile('idImage')) {
-        $path = $request->file('idImage')->store('ids', 'public');
-        $user->idImage = $path;
-    }
-
-    // Save changes
-    $user->save();
-
-    return response()->json([
-        'message' => 'Profile updated successfully',
-        'user' => $user,
-    ]);
 }
+
 
 
     public function getPatientById(Request $request,$id)
