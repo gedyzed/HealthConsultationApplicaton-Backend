@@ -186,13 +186,14 @@ public function setProfile(Request $request)
 
 public function getPatientList(Request $request, $doctor_id)
 {
-    $patients = DB::table('appointments')
-        ->join('users', 'appointments.patient_id', '=', 'users.user_id')
-        ->where('appointments.doctor_id', $doctor_id)
+    $patients = DB::table('appointments') 
+        ->join('patients', 'appointments.patient_id', '=', 'patients.patient_id') 
+        ->join('users', 'patients.patient_id', '=', 'users.user_id') 
+        ->where('appointments.doctor_id', $doctor_id)  
         ->select(
-            'users.user_id',
-            'users.fullName',
-            'users.email',    
+            'users.user_id', 
+            'patients.patient_id', 
+            'users.email' 
         )
         ->distinct()
         ->get();
