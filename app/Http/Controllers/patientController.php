@@ -115,17 +115,30 @@ public function getPatientList(Request $request, $patient_id)
     return response()->json($doctors, 200);
 }
 
-public function getDocterList(Request $request , $id){
-        $appointments = Appointments::where("patient_id",$id)->get();
-        $doctor = [];
-        
-        foreach ($appointments as $app){
-            $doctor[] = $app->doctor;
-            
-        }
-        return response()->json(array_unique($doctor),200);
+public function getDoctorList(Request $request, $id)
+{
+    try {
+        $doctors = DB::table('appointments')
+            ->join('doctors', 'appointments.doctor_id', '=', 'doctors.doctor_id')
+            ->join('users', 'doctors.doctor_id', '=', 'users.user_id')
+            ->where('appointments.patient_id', $id)
+            ->select(
+                'users.user_id',
+                'users.fullName',
+                'users.email'
+            )
+            ->distinct()
+            ->get();
 
-        }
+        return response()->json($doctors, 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Failed to retrieve doctor list',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+}
+
 }
  
 
