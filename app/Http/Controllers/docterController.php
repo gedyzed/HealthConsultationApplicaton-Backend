@@ -192,6 +192,7 @@ public function getPatientList(Request $request, $doctor_id)
         ->where('appointments.doctor_id', $doctor_id)  
         ->select(
             'users.user_id', 
+            'patients.fullName',
             'patients.patient_id', 
             'users.email' 
         )
