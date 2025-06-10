@@ -184,17 +184,22 @@ public function setProfile(Request $request)
 
 
 
-    public function getPatientList(Request $request , $id){
-        $appointments = Appointments::where("doctor_id",$id)->get();
-        $patient = [];
-        
-        foreach ($appointments as $app){
-            $patient[] = $app->patient;
-            
-        }
-        return response()->json(array_unique($patient),200);
+public function getPatientList(Request $request, $doctor_id)
+{
+    $patients = DB::table('appointments')
+        ->join('users', 'appointments.patient_id', '=', 'users.id')
+        ->where('appointments.doctor_id', $doctor_id)
+        ->select(
+            'users.id',
+            'users.fullName',
+            'users.email',    
+        )
+        ->distinct()
+        ->get();
 
-        }
+    return response()->json($patients, 200);
+}
+
 
 
 
