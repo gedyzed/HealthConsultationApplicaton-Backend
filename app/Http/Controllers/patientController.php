@@ -114,6 +114,18 @@ public function getPatientList(Request $request, $patient_id)
 
     return response()->json($doctors, 200);
 }
+
+public function getDocterList(Request $request , $id){
+        $appointments = Appointments::where("patient_id",$id)->get();
+        $doctor = [];
+        
+        foreach ($appointments as $app){
+            $doctor[] = $app->doctor;
+            
+        }
+        return response()->json(array_unique($doctor),200);
+
+        }
 }
  
 
