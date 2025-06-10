@@ -67,6 +67,7 @@ class patientController extends Controller
         return response()->json([
             "status"=>"success",
             "role"=>$user->role,
+            "fullName"=>$user->fullName,
             "email"=>$user->email,
             "password"=>$user->role,
             "patient"=>$user->patient,
