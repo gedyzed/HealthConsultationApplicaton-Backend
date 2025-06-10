@@ -22,9 +22,9 @@ public function setProfile(Request $request)
 {
     try {
         $validator = Validator::make($request->all(), [
-            'patient_id' => 'required|exists:patients,id',
-            'name' => 'nullable|string|max:255',
-            'gender' => 'nullable|string|in:male,female,other',
+            'patient_id' => 'required',
+            'name' => 'nullable|string',
+            'gender' => 'nullable|string',
             'about' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'idImage' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
@@ -37,11 +37,8 @@ public function setProfile(Request $request)
             ], 422);
         }
 
-        $patient = Patient::find($request->patient_id);
-
-        if (!$patient) {
-            return response()->json(['message' => 'Patient not found.'], 404);
-        }
+        // Find or create a new patient instance (not saved yet)
+        $patient = Patient::firstOrNew(['id' => $request->patient_id]);
 
         // Handle profile image upload
         if ($request->hasFile('image')) {
@@ -72,7 +69,7 @@ public function setProfile(Request $request)
 
         return response()->json([
             'status' => 200,
-            'message' => 'Profile updated successfully',
+            'message' => 'Profile saved successfully',
             'data' => $patient,
         ], 200);
 
@@ -83,6 +80,7 @@ public function setProfile(Request $request)
         ], 500);
     }
 }
+
 
 
 
