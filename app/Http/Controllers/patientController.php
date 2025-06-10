@@ -61,16 +61,16 @@ public function setProfile(Request $request)
         
 
         // Update optional fields
-        if ($request->filled('name')) {
-            $patient->name = $request->name;
+        if ($request->filled('fullName')) {
+            $patient->fullName = $request->fullName;
         }
 
         if ($request->filled('gender')) {
             $patient->gender = $request->gender;
         }
 
-        if ($request->filled('about')) {
-            $patient->about = $request->about;
+        if ($request->filled('aboutMe')) {
+            $patient->aboutMe = $request->aboutMe;
         }
 
         $patient->save();
