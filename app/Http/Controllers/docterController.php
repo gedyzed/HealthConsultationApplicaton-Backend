@@ -39,6 +39,12 @@ class docterController extends Controller
         ]);
     }
 
+    public function getDoctors(Request $request)
+    {
+        $user = Doctors::find();
+        return response()->json([$user]);
+    }
+
     public function getProfileById(Request $request, $id){
         $user = User::find($id);
         $user->doctor;
