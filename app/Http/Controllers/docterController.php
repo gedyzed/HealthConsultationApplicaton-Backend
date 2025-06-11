@@ -41,7 +41,7 @@ class docterController extends Controller
 
     public function getDoctors(Request $request)
     {
-        $user = Doctors::find();
+        $user = Doctors::all();
         return response()->json([$user]);
     }
 
