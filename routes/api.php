@@ -49,7 +49,7 @@ Route::post('/doctor/editProfile/{id}', [docterController::class, 'editProfile']
 // ->middleware("auth:api");
 Route::get('/patientList/{id}',[docterController::class,"getPatientList"]);
 //  ->middleware("auth:api");
-Route::get('/doctors/{id}/unverified-doctor', [docterController::class, 'getUserWithUnverifiedDoctor']);
+Route::get('/doctors/unverified-doctor', [docterController::class, 'getUserWithUnverifiedDoctor']);
 
 //appointments
 Route::post("/setAppointment",[appointmentController::class, "setAppointment"]);
