@@ -45,7 +45,7 @@ public function specializedDoctors(Request $request, $name)
             'users.email',
             'doctors.experience',
             'doctors.image',
-            'specializations.name as specialization_name'
+            'specializations.name'
         )
         ->get();
 
