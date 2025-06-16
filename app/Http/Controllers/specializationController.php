@@ -6,6 +6,7 @@ use App\Models\Doctors;
 use App\Models\Specializations;
 use Illuminate\Http\Request;
 use Symfony\Contracts\Service\Attribute\Required;
+use Illuminate\Support\Facades\DB;
 
 class specializationController extends Controller
 {
