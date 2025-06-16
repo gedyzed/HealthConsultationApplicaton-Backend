@@ -200,6 +200,9 @@ public function setProfile(Request $request)
 }
 
 
+    
+
+
 
 
 
@@ -302,6 +305,28 @@ public function getPatientList(Request $request, $doctor_id)
             'users' => $users
         ]);
     }
+
+    public function updateDoctorStatus(Request $request, $id)
+{
+    $request->validate([
+        'status' => 'required|in:verified,rejected',
+    ]);
+
+    $doctor = Doctor::find($id);
+
+    if (!$doctor) {
+        return response()->json(['error' => 'Doctor not found'], 404);
+    }
+
+    $doctor->status = $request->status;
+    $doctor->save();
+
+    return response()->json([
+        'message' => 'Doctor status updated successfully',
+        'doctor' => $doctor,
+    ]);
+}
+
 
 }
 
