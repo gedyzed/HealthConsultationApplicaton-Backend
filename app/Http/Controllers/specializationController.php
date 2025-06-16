@@ -32,24 +32,25 @@ class specializationController extends Controller
     }
 
 
-    public function specializedDoctors(Request $request, $name)
+public function specializedDoctors(Request $request, $name)
 {
-    $doctors = DB::table('doctors') 
-        ->join('users', 'doctors.doctor_id', '=', 'users.user_id') 
-        ->join('specializations', 'doctors.specialization_id', '=', 'specializations.specialization_id') 
-        ->where('specializations.name', $name) 
-        ->where('doctors.status', 'verified') 
+    $doctors = DB::table('doctors')
+        ->join('users', 'doctors.doctor_id', '=', 'users.user_id')
+        ->join('specializations', 'specializations.doctor_id', '=', 'doctors.doctor_id')
+        ->where('specializations.name', $name)
+        ->where('doctors.status', 'verified')
         ->select(
-            'doctors.doctor_id', 
-            'users.fullName', 
-            'users.email', 
-            'doctors.experience', 
-            'doctors.image', 
+            'doctors.doctor_id',
+            'users.fullName',
+            'users.email',
+            'doctors.experience',
+            'doctors.image',
             'specializations.name as specialization_name'
         )
         ->get();
 
     return response()->json($doctors);
 }
+
 
 }
