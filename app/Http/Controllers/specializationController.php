@@ -44,7 +44,7 @@ public function specializedDoctors(Request $request, $name)
             'doctors.fullName', 
             'users.email',
             'doctors.yearOfExperience',
-            'doctors.price',
+            'doctors.pricing',
             'doctors.image',
             'specializations.name'
         )
