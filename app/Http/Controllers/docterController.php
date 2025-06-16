@@ -217,6 +217,9 @@ public function setProfile(Request $request)
 
 
 
+
+
+
 public function getPatientList(Request $request, $doctor_id)
 {
     $patients = DB::table('appointments') 
@@ -234,6 +237,8 @@ public function getPatientList(Request $request, $doctor_id)
 
     return response()->json($patients, 200);
 }
+
+
 
 
 
@@ -303,4 +308,18 @@ public function getPatientList(Request $request, $doctor_id)
             'message' => 'Profile updated successfully',
         ]);
     }
+
+
+    public function getAllUsers(Request $request){
+        $users = User::all();
+
+        return response()->json([
+            'users' => $users
+        ]);
+    }
+
 }
+
+
+
+

@@ -37,6 +37,7 @@ Route::get('/doctorList/{id}',[patientController::class, "getDocterList"]);
 
 //docter
 Route::get("/doctors", [docterController::class, "getDoctors"]);
+Route::get("/getAllUsers", [docterController::class, "getAllUsers"]);
 Route::get("/doctor/{id}", [docterController::class, "getDoctorById"]);
 // ->middleware("auth:api");
 Route::get("/doctor/getProfileById/{id}",[docterController::class, "getProfileById"]);
