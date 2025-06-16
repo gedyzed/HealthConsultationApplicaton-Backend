@@ -51,6 +51,8 @@ Route::post('/doctor/editProfile/{id}', [docterController::class, 'editProfile']
 Route::get('/patientList/{id}',[docterController::class,"getPatientList"]);
 //  ->middleware("auth:api");
 Route::get('/doctors/unverified-doctor', [docterController::class, 'getUnverifiedDoctors']);
+Route::put('/admin/doctors/{id}/status', [docterController::class, 'updateDoctorStatus']);
+
 
 //appointments
 Route::post("/setAppointment",[appointmentController::class, "setAppointment"]);
