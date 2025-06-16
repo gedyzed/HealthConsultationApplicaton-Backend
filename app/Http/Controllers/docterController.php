@@ -29,7 +29,6 @@ class docterController extends Controller
             'doctor.certificates',
             'doctor.educations',
             'doctor.specializations',
-            'doctor.appointments',
         ])
         ->get();
 
