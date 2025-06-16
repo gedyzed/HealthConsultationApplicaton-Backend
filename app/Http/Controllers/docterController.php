@@ -18,7 +18,7 @@ class docterController extends Controller
 {
     //
 
-    public function getUserWithUnverifiedDoctor($id): 
+    public function getUserWithUnverifiedDoctors($id): 
 {
     $user = User::whereHas('doctors', function ($query) {
             $query->where('status', 'unverified');
