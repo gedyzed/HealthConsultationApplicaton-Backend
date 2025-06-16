@@ -41,7 +41,7 @@ public function specializedDoctors(Request $request, $name)
         ->where('doctors.status', 'verified')
         ->select(
             'doctors.doctor_id',
-            'users.fullName',
+            'doctors.fullName', 
             'users.email',
             'doctors.experience',
             'doctors.image',
