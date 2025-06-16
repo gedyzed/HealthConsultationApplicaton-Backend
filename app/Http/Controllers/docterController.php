@@ -312,7 +312,7 @@ public function getPatientList(Request $request, $doctor_id)
         'status' => 'required|in:verified,rejected',
     ]);
 
-    $doctor = Doctor::find($id);
+    $doctor = Doctors::find($id);
 
     if (!$doctor) {
         return response()->json(['error' => 'Doctor not found'], 404);
