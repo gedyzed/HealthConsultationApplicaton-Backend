@@ -9,7 +9,7 @@ use Symfony\Contracts\Service\Attribute\Required;
 
 class specializationController extends Controller
 {
-    public function specializedDoctors(Required $required, $name)
+    public function specializedDoctor(Required $required, $name)
     {
 
 
@@ -29,4 +29,26 @@ class specializationController extends Controller
 
         return response()->json($doctor);
     }
+
+
+    public function specializedDoctors(Request $request, $name)
+{
+    $doctors = DB::table('doctors') 
+        ->join('users', 'doctors.doctor_id', '=', 'users.user_id') 
+        ->join('specializations', 'doctors.specialization_id', '=', 'specializations.specialization_id') 
+        ->where('specializations.name', $name) 
+        ->where('doctors.status', 'verified') 
+        ->select(
+            'doctors.doctor_id', 
+            'users.fullName', 
+            'users.email', 
+            'doctors.experience', 
+            'doctors.image', 
+            'specializations.name as specialization_name'
+        )
+        ->get();
+
+    return response()->json($doctors);
+}
+
 }
