@@ -18,9 +18,36 @@ class docterController extends Controller
 {
     //
 
+    public function getUserWithUnverifiedDoctor($id): 
+{
+    $user = User::whereHas('doctors', function ($query) {
+            $query->where('status', 'unverified');
+        })
+        ->with(['doctors' => function ($query) {
+            $query->where('status', 'unverified')
+                ->with([
+                    'languages', 
+                    'certificates', 
+                    'educations', 
+                    'specializations', 
+                    'appointments'
+                ]);
+        }])
+        ->find($id);
 
-    
+    if (!$user) {
+        return response()->json([
+            'success' => false,
+            'message' => 'User not found or doctor is verified',
+            'data' => null
+        ], 404);
+    }
 
+    return response()->json([
+        'success' => true,
+        'data' => $user
+    ]);
+}
 
 
     public function getDoctorById(Request $request, $id)
